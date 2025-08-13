@@ -6110,5 +6110,220 @@ if (sb && files.length > 0) {
             }
         });
     </script>
+    <script>
+        // Solución para la barra de navegación móvil
+// Agregar este script al final de tu archivo JavaScript
+
+(function() {
+    // Estilos adicionales para asegurar que la barra móvil sea visible
+    const styleElement = document.createElement('style');
+    styleElement.textContent = `
+        /* Estilos para garantizar la visibilidad de la barra móvil */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background-color: #ffffff;
+            border-top: 1px solid #e5e7eb;
+            z-index: 9999;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Estilo para modo oscuro */
+        @media (prefers-color-scheme: dark) {
+            .mobile-nav {
+                background-color: #1f2937;
+                border-top-color: #374151;
+            }
+        }
+        
+        /* Forzar visualización en móviles sin importar otras reglas */
+        @media (max-width: 1023px) {
+            .mobile-nav {
+                display: flex !important;
+            }
+            
+            .content-wrapper {
+                padding-bottom: 70px !important;
+            }
+            
+            /* Asegurar que el main-content tenga la altura correcta */
+            .main-content {
+                height: calc(100% - 60px - 56px) !important;
+            }
+        }
+        
+        /* Contenedor de la barra móvil */
+        .mobile-nav-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Elementos de navegación */
+        .mobile-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-size: 0.625rem;
+            padding: 0.25rem;
+            transition: all 0.2s;
+            position: relative;
+            text-decoration: none;
+        }
+        
+        .mobile-nav-item.active {
+            color: #4f46e5;
+        }
+        
+        .mobile-nav-item.active::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            right: 25%;
+            height: 3px;
+            background-color: #4f46e5;
+            border-radius: 3px 3px 0 0;
+        }
+        
+        .mobile-nav-icon {
+            font-size: 1.25rem;
+            margin-bottom: 0.125rem;
+        }
+    `;
+    document.head.appendChild(styleElement);
+
+    // Función para asegurar que la barra móvil exista
+    function asegurarBarraMobil() {
+        // Verificar si la barra móvil existe
+        let mobileNav = document.querySelector('.mobile-nav');
+        
+        if (!mobileNav) {
+            // Si no existe, crearla
+            mobileNav = document.createElement('div');
+            mobileNav.className = 'mobile-nav';
+            mobileNav.innerHTML = `
+                <div class="mobile-nav-container">
+                    <a href="#dashboard" class="mobile-nav-item" data-page="dashboard">
+                        <i class="mobile-nav-icon bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#registro" class="mobile-nav-item" data-page="registro">
+                        <i class="mobile-nav-icon bi bi-clipboard-plus"></i>
+                        <span>Registrar</span>
+                    </a>
+                    <a href="#pendientes" class="mobile-nav-item" data-page="pendientes">
+                        <i class="mobile-nav-icon bi bi-exclamation-triangle"></i>
+                        <span>Pendientes</span>
+                    </a>
+                    <a href="#mapa" class="mobile-nav-item" data-page="mapa">
+                        <i class="mobile-nav-icon bi bi-geo-alt"></i>
+                        <span>Mapa</span>
+                    </a>
+                    <a href="#" class="mobile-nav-item" id="mobile-more-btn">
+                        <i class="mobile-nav-icon bi bi-three-dots"></i>
+                        <span>Más</span>
+                    </a>
+                </div>
+            `;
+            
+            document.body.appendChild(mobileNav);
+            
+            // Agregar evento al botón "Más"
+            const mobileMoreBtn = document.getElementById('mobile-more-btn');
+            if (mobileMoreBtn) {
+                mobileMoreBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar) sidebar.classList.add('mobile-visible');
+                });
+            }
+        }
+        
+        // Asegurarse de que tenga el estilo display:flex en móviles
+        if (window.innerWidth <= 1023) {
+            mobileNav.style.display = 'flex';
+        }
+        
+        // Actualizar estado activo según la página actual
+        actualizarEstadoActivo();
+    }
+    
+    // Función para actualizar el estado activo de la barra móvil
+    function actualizarEstadoActivo() {
+        // Obtener página actual desde el hash
+        const currentPage = window.location.hash.slice(1) || 'dashboard';
+        
+        // Actualizar clase activa en la barra móvil
+        const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+        mobileNavItems.forEach(item => {
+            const itemPage = item.getAttribute('data-page');
+            if (itemPage === currentPage) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    }
+    
+    // Eventos para los elementos de navegación móvil
+    function setupMobileNavEvents() {
+        const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+        mobileNavItems.forEach(item => {
+            if (item.id !== 'mobile-more-btn') {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    if (page) {
+                        // Cambiar hash (que debería activar la navegación existente)
+                        window.location.hash = page;
+                        
+                        // También actualizamos activo manualmente
+                        actualizarEstadoActivo();
+                        
+                        // Cerrar sidebar si está abierto
+                        const sidebar = document.getElementById('sidebar');
+                        if (sidebar) sidebar.classList.remove('mobile-visible');
+                    }
+                });
+            }
+        });
+    }
+    
+    // Ejecutar cuando cambia el hash
+    window.addEventListener('hashchange', actualizarEstadoActivo);
+    
+    // Ejecutar cuando cambia el tamaño de la ventana
+    window.addEventListener('resize', asegurarBarraMobil);
+    
+    // Ejecutar periódicamente para asegurar que siempre esté presente
+    function inicializar() {
+        asegurarBarraMobil();
+        setupMobileNavEvents();
+    }
+    
+    // Inicializar cuando el DOM esté cargado
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', inicializar);
+    } else {
+        inicializar();
+    }
+    
+    // También ejecutar periódicamente para asegurar que siempre esté presente
+    setInterval(asegurarBarraMobil, 2000);
+    
+    console.log("✅ Solución para barra de navegación móvil instalada correctamente");
+})();
+
+
+
+    </script>
 </body>
 </html>
