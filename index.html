@@ -1343,111 +1343,214 @@
                 height: 400px;
             }
         }
-
-        /* Toast Notifications */
         .toast-container {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            width: 300px;
-            max-width: calc(100vw - 2rem);
-        }
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 320px;
+    max-width: calc(100vw - 2rem);
+    pointer-events: none; /* Permite clics a través del contenedor, pero no de los toasts */
+}
 
-        @media (max-width: 1023px) {
-            .toast-container {
-                bottom: calc(var(--mobile-nav-height) + 1rem);
-            }
-        }
+.toast {
+    background-color: var(--bg-card);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    transition: all var(--transition);
+    animation: slideInRight 0.3s ease, fadeOut 0.5s ease 5s forwards;
+    border-left: 3px solid var(--primary-600);
+    max-width: 100%;
+    position: relative;
+    pointer-events: auto; /* Restaura los eventos de clic */
+}
 
-        .toast {
-            background-color: var(--bg-card);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-md);
-            padding: 0.75rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-            transition: all var(--transition);
-            animation: slideIn 0.3s var(--ease), fadeOut 0.5s var(--ease) 5s forwards;
-            border-left: 3px solid var(--primary-600);
-            max-width: 100%;
-            position: relative;
-        }
+.toast.success {
+    border-left-color: var(--success);
+}
 
-        .toast.success {
-            border-left-color: var(--success);
-        }
+.toast.error {
+    border-left-color: var(--danger);
+}
 
-        .toast.error {
-            border-left-color: var(--danger);
-        }
+.toast.warning {
+    border-left-color: var(--warning);
+}
 
-        .toast.warning {
-            border-left-color: var(--warning);
-        }
+.toast-icon {
+    font-size: 1.125rem;
+    flex-shrink: 0;
+    color: var(--primary-600);
+    margin-top: 0.125rem;
+}
 
-        .toast-icon {
-            font-size: 1.125rem;
-            flex-shrink: 0;
-            color: var(--primary-600);
-        }
+.toast.success .toast-icon {
+    color: var(--success);
+}
 
-        .toast.success .toast-icon {
-            color: var(--success);
-        }
+.toast.error .toast-icon {
+    color: var(--danger);
+}
 
-        .toast.error .toast-icon {
-            color: var(--danger);
-        }
+.toast.warning .toast-icon {
+    color: var(--warning);
+}
 
-        .toast.warning .toast-icon {
-            color: var(--warning);
-        }
+.toast-body {
+    flex: 1;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
 
-        .toast-body {
-            flex: 1;
-            font-size: 0.875rem;
-        }
+.toast-close {
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    font-size: 1.125rem;
+    cursor: pointer;
+    padding: 0.125rem;
+    line-height: 1;
+    transition: color var(--transition-fast);
+    flex-shrink: 0;
+    margin-left: auto;
+    margin-top: -0.125rem;
+}
 
-        .toast-close {
-            color: var(--text-muted);
-            background: transparent;
-            border: none;
-            font-size: 1.125rem;
-            cursor: pointer;
-            padding: 0;
-            line-height: 1;
-            transition: color var(--transition-fast);
-        }
+.toast-close:hover {
+    color: var(--text-primary);
+}
 
-        .toast-close:hover {
-            color: var(--text-primary);
-        }
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
 
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(10px);
+        visibility: hidden;
+    }
+}
 
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-            }
-            to {
-                opacity: 0;
-                visibility: hidden;
-            }
-        }
+/* Notification Panel - Nuevos estilos */
+.notification-panel {
+    position: fixed;
+    top: var(--header-height);
+    right: 0;
+    width: 350px;
+    max-width: 100vw;
+    height: calc(100vh - var(--header-height));
+    background-color: var(--bg-card);
+    box-shadow: -2px 0 15px rgba(0, 0, 0, 0.1);
+    z-index: 60;
+    transform: translateX(100%);
+    transition: transform var(--transition) var(--ease);
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--border-color);
+}
+
+.notification-panel.visible {
+    transform: translateX(0);
+}
+
+.notification-header {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.notification-title {
+    font-weight: 600;
+    font-size: 1.125rem;
+    margin: 0;
+}
+
+.notification-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.75rem;
+}
+
+.notification-item {
+    padding: 0.875rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 0.75rem;
+    background-color: var(--bg-hover);
+    border-left: 3px solid var(--primary-600);
+    transition: background-color var(--transition-fast);
+    cursor: pointer;
+}
+
+.notification-item:hover {
+    background-color: var(--bg-hover);
+}
+
+.notification-item.unread {
+    background-color: var(--primary-50);
+    position: relative;
+}
+
+.notification-item.unread::after {
+    content: "";
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--primary-600);
+}
+
+.notification-item-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    padding-right: 1rem;
+}
+
+.notification-item-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.notification-item-content {
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.notification-footer {
+    padding: 0.875rem;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid var(--border-color);
+}
+
+@media (max-width: 1023px) {
+    .toast-container {
+        bottom: calc(var(--mobile-nav-height) + 1rem);
+    }
+}
 
         /* Modal */
         .modal-backdrop {
@@ -6001,18 +6104,6 @@ if (sb && files.length > 0) {
 
                 // Actualizar año en footer
                 $('#yy').textContent = new Date().getFullYear();
-
-                // Mostrar mensaje de bienvenida
-                setTimeout(() => {
-                    const name = userConfig.userName || 'Usuario';
-                    showNotification(
-                        `¡Bienvenido, ${name}!`,
-                        `Sistema de Limpieza de Flota inicializado correctamente. Terminal: ${userConfig.userTerminal || 'No configurado'}.`,
-                        'success'
-                    );
-                    // Todo cargado correctamente
-                    showToast("Sistema inicializado correctamente", "success");
-                }, 1500);
             } catch (error) {
                 console.error('Error inicializando la aplicación:', error);
                 showToast('Error inicializando la aplicación: ' + error.message, 'error');
